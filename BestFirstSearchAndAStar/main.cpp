@@ -27,11 +27,10 @@ bool isStart = true;
 bool runBFS = false;
 bool runAStar = false;
 
-vector<Cell*> cells; // The vector holding all of the cells from the starting point.
-vector<Cell*> visited;
-vector<Cell*> notVisited;
-priority_queue<Cell, vector<Cell>, CompareBFSCells>  BFSPq;
-priority_queue<Cell, vector<Cell>, CompareAStarCells>  aStarPq;
+vector<Cell*> visited; //saving visited cells
+vector<Cell*> notVisited; // saving neighbour cells that were not visited yet
+priority_queue<Cell, vector<Cell>, CompareBFSCells>  BFSPq; // will be used to go through cells in Best First Search
+priority_queue<Cell, vector<Cell>, CompareAStarCells>  aStarPq; // will be used to go through cells in A*
 
 void InitMaze();
 double distance(int x1, int y1);
@@ -78,8 +77,8 @@ void InitMaze()
 		}
 
 	maze[MSZ / 2][MSZ / 2] = START;
-	targetCoords[0] = rand() % MSZ; // Save ending X point of target.
-	targetCoords[1] = rand() % MSZ; // Save ending Y Point of target.
+	targetCoords[0] = rand() % MSZ; // Save a random ending X point of target.
+	targetCoords[1] = rand() % MSZ; // Save a random ending Y Point of target.
 	maze[targetCoords[0]][targetCoords[1]] = TARGET;
 
 	Cell* sCell = new Cell(MSZ / 2, MSZ / 2, 0, 0, nullptr); // Create starting point cell. 
@@ -113,7 +112,7 @@ void DrawMaze()
 			case TARGET:
 				glColor3d(1, 0, 0);
 				break;
-			case MARKED: // Color cells visited by BFS from starting point.
+			case MARKED: // Color cells visited from starting point.
 				glColor3d(0.9, 0.9, 0.5);
 				break;
 			case PATH: // Color the path found as a solution.
@@ -145,6 +144,7 @@ double manhattanDistance(int x1, int y1)
 }
 
 
+// Reset the path and marked cells
 void resetMaze() 
 {
 	for (int i = 0; i < MSZ; i++)
